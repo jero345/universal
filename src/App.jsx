@@ -1,296 +1,833 @@
-import React, { useState, useEffect } from 'react';
-import { Leaf, Sprout, Tractor, Globe, ChevronRight, Menu, X, ArrowRight, ShieldCheck, TrendingUp, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ArrowRight, ChevronDown, Phone, Mail, MapPin, Globe, Link, Share2 } from 'lucide-react';
 
-const realProducts = [
+/* ─── Brand Data ─────────────────────────────────────────────────── */
+const products = [
   {
     id: 1,
     name: 'UNIVERSAL Ca-B-Zn',
     tag: 'Fertilizante Premium',
-    desc: 'Diseñado para prevenir y corregir deficiencias de Ca-B-Zn en cultivos de alto rendimiento. Su formulación con gluconatos lo hace más disponible para la planta, logrando un efecto mucho más rápido.',
-    details: 'Ideal en cualquier estado fenológico del cultivo que presente deficiencia o requiera prevención.',
-    imgPlaceholder: 'https://images.unsplash.com/photo-1584948013318-77114b7e3243?w=500&q=80', // Replace with actual bottle
-    color: 'from-blue-500 to-cyan-400'
+    desc: 'Previene y corrige deficiencias de Ca-B-Zn. Su formulación con gluconatos logra un efecto mucho más rápido y disponible para la planta.',
+    color: '#1b4999',
+    accent: '#97c822',
+    icon: '🌿',
+    img: '/photos/pequeños.jpg',
   },
   {
     id: 2,
     name: 'AGRO MAG',
     tag: 'Fuente de Magnesio',
-    desc: 'Fertilizante fuente de Magnesio quelatado con gluconatos de alta estabilidad.',
-    details: 'Diseñado para aplicación al suelo y/o foliar para corregir y prevenir deficiencias de Magnesio.',
-    imgPlaceholder: 'https://images.unsplash.com/photo-1628183185369-0bd46790901e?w=500&q=80', // Replace with actual bottle
-    color: 'from-green-500 to-emerald-400'
+    desc: 'Fertilizante fuente de Magnesio quelatado con gluconatos de alta estabilidad. Aplicación al suelo y/o foliar.',
+    color: '#97c822',
+    accent: '#1b4999',
+    icon: '🌱',
+    img: '/photos/agromag-jpg.jpg',
   },
   {
     id: 3,
     name: 'NEW GREEN',
     tag: 'Mejora de Cultivos',
-    desc: 'Diseñado para mejorar la calidad y llenado de cultivos de exportación. Enriquecido con citoquininas 600 ppm.',
-    details: 'Actúa como activador de estructuras enzimáticas, capaz de catalizar la mayor parte de las reacciones típicas del metabolismo de la planta e influenciar su fisiología.',
-    imgPlaceholder: 'https://images.unsplash.com/photo-1628183185566-1c25bd57e4e0?w=500&q=80', // Replace with actual bottle
-    color: 'from-lime-500 to-green-400'
+    desc: 'Mejora calidad y llenado de cultivos de exportación. Enriquecido con citoquininas 600 ppm. Activa el metabolismo celular.',
+    color: '#1b4999',
+    accent: '#97c822',
+    icon: '🌾',
+    img: '/photos/new-green-jpg.jpg',
   },
   {
     id: 4,
     name: 'PERFEKTO',
     tag: 'Bioestimulante Foliar',
-    desc: 'Aporta potasio y fósforo, ligados químicamente a moléculas orgánicas del metabolismo celular.',
-    details: 'Contiene gluconato de potasio, ácidos carboxílicos de bajo peso molecular y hormonas (citoquininas) que ayudan a la división celular. Maximiza rendimiento y calidad en etapas productivas.',
-    imgPlaceholder: 'https://images.unsplash.com/photo-1605369674061-0f781dfaa234?w=500&q=80', // Replace with actual bottle
-    color: 'from-purple-500 to-indigo-400'
+    desc: 'Aporta potasio y fósforo ligados a moléculas orgánicas. Con gluconato de potasio, ácidos carboxílicos y hormonas que maximizan el rendimiento.',
+    color: '#97c822',
+    accent: '#1b4999',
+    icon: '🌻',
+    img: '/photos/perfekto-jpg.jpg',
   },
   {
     id: 5,
     name: 'AGRO 30',
     tag: 'Acondicionador de Suelos',
-    desc: 'Desarrollado según rigurosos estudios de nuestro equipo técnico para penetrar los perfiles del suelo en tiempos prudentes.',
-    details: 'Aumenta el CIC y optimiza el pH del suelo, haciendo más eficiente la nutrición y extracción por parte de la planta. Ideal para cultivos de exportación con altos requerimientos fisiológicos.',
-    imgPlaceholder: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=500&q=80', // Replace with actual bottle
-    color: 'from-amber-500 to-yellow-400'
-  }
+    desc: 'Penetra los perfiles del suelo. Aumenta el CIC, optimiza el pH y hace más eficiente la nutrición de la planta.',
+    color: '#1b4999',
+    accent: '#97c822',
+    icon: '🪴',
+    img: '/photos/agro-humita-jpg.jpg',
+  },
+  {
+    id: 6,
+    name: 'AGRO CAL MAG',
+    tag: 'Enmienda Agrícola',
+    desc: 'Corrección y mejora de las condiciones físicas, químicas y biológicas del suelo. Mejora la calidad en cultivos de exportación y/o nacionales.',
+    color: '#97c822',
+    accent: '#1b4999',
+    icon: '🧪',
+    img: null,
+  },
 ];
 
-export default function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const values = [
+  { icon: '💡', title: 'Innovación Aplicada', desc: 'Tecnología al servicio del campo colombiano.' },
+  { icon: '♻️', title: 'Sostenibilidad Responsable', desc: 'Prácticas que cuidan el medio ambiente.' },
+  { icon: '🏆', title: 'Calidad y Eficiencia', desc: 'Estándares internacionales en cada producto.' },
+  { icon: '🤝', title: 'Compromiso con el Productor', desc: 'Tu rentabilidad es nuestra misión.' },
+  { icon: '🌾', title: 'Desarrollo Rural', desc: 'Impulsando el campo colombiano hacia el futuro.' },
+];
+
+const stats = [
+  { value: 15, suffix: '+', label: 'Años de experiencia' },
+  { value: 5, suffix: 'K+', label: 'Productores atendidos' },
+  { value: 100, suffix: '%', label: 'Respaldo técnico' },
+  { value: 30, suffix: '+', label: 'Productos en catálogo' },
+];
+
+/* ─── Animated Counter ───────────────────────────────────────────── */
+function Counter({ value, suffix, label }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        let start = 0;
+        const duration = 2000;
+        const step = 16;
+        const increment = value / (duration / step);
+        const timer = setInterval(() => {
+          start += increment;
+          if (start >= value) { setCount(value); clearInterval(timer); }
+          else setCount(Math.floor(start));
+        }, step);
+      }
+    }, { threshold: 0.5 });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return (
+    <div ref={ref} className="text-center group">
+      <div className="font-brand text-6xl md:text-7xl text-agro-green leading-none mb-2 transition-transform duration-300 group-hover:scale-110">
+        {count}{suffix}
+      </div>
+      <div className="font-slogan text-white/70 text-sm uppercase tracking-widest">{label}</div>
+    </div>
+  );
+}
+
+/* ─── Reveal on Scroll ───────────────────────────────────────────── */
+function Reveal({ children, delay = 0, className = '' }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.disconnect(); }
+    }, { threshold: 0.1 });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <div className="min-h-screen bg-earth-50 font-sans text-gray-800 overflow-x-hidden">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass-effect py-3' : 'bg-transparent py-5'}`}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-nature-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-nature-500/30">
-              <Leaf className="text-white w-6 h-6" />
-            </div>
-            <span className={`text-2xl font-bold tracking-tight ${isScrolled ? 'text-gray-900' : 'text-white'}`}>Universal Agro</span>
-          </div>
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ${className}`}
+      style={{
+        transitionDelay: `${delay}ms`,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(40px)',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── Floating Particles ─────────────────────────────────────────── */
+function FloatingParticles() {
+  const particles = Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    size: Math.random() * 120 + 30,
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    delay: Math.random() * 6,
+    duration: Math.random() * 8 + 6,
+    color: i % 3 === 0 ? '#97c822' : i % 3 === 1 ? '#1b4999' : '#ffffff',
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            backgroundColor: p.color,
+            opacity: 0.07,
+            animation: `float ${p.duration}s ease-in-out ${p.delay}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ─── Main App ───────────────────────────────────────────────────── */
+export default function App() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeProduct, setActiveProduct] = useState(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+
+      {/* ── NAV ─────────────────────────────────────────────────────── */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-black/5 py-3'
+          : 'bg-transparent py-5'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between">
+          {/* Logo */}
+          <a href="#inicio" className="flex-shrink-0">
+            <img
+              src={scrolled ? '/logos/logo-1.png' : '/logos/mesa-de-trabajo-3.png'}
+              alt="Universal Agro"
+              className="h-32 w-auto transition-all duration-300"
+              style={{ mixBlendMode: scrolled ? 'multiply' : 'normal' }}
+            />
+          </a>
+
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#inicio" className={`text-sm font-medium transition-colors hover:text-nature-500 ${isScrolled ? 'text-gray-600' : 'text-white/90'}`}>Inicio</a>
-            <a href="#nosotros" className={`text-sm font-medium transition-colors hover:text-nature-500 ${isScrolled ? 'text-gray-600' : 'text-white/90'}`}>Nosotros</a>
-            <a href="#productos" className={`text-sm font-medium transition-colors hover:text-nature-500 ${isScrolled ? 'text-gray-600' : 'text-white/90'}`}>Productos</a>
-            <a href="#contacto" className="px-5 py-2.5 rounded-full bg-nature-600 text-white text-sm font-semibold hover:bg-nature-700 transition-all shadow-lg hover:shadow-nature-600/40">Contáctanos</a>
+            {['inicio','nosotros','productos','valores','contacto'].map((s) => (
+              <a
+                key={s}
+                href={`#${s}`}
+                className={`text-sm font-slogan font-medium capitalize tracking-wide transition-colors duration-200 ${
+                  scrolled
+                    ? 'text-gray-600 hover:text-agro-blue'
+                    : 'text-white/85 hover:text-agro-green'
+                }`}
+              >
+                {s}
+              </a>
+            ))}
+            <a
+              href="#contacto"
+              className="px-6 py-2.5 rounded-full bg-agro-green text-agro-blue font-brand text-sm tracking-wide hover:bg-agro-green-dark transition-all shadow-lg shadow-agro-green/30 hover:shadow-agro-green/50 hover:-translate-y-0.5"
+            >
+              Contáctanos
+            </a>
           </div>
-          <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className={isScrolled ? "text-gray-900" : "text-white"}/> : <Menu className={isScrolled ? "text-gray-900" : "text-white"} />}
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className={`md:hidden p-2 ${scrolled ? 'text-agro-blue' : 'text-white'}`}
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileOpen && (
+          <div className="md:hidden bg-agro-blue text-white px-6 py-6 flex flex-col gap-5 shadow-2xl">
+            {['inicio','nosotros','productos','valores','contacto'].map((s) => (
+              <a
+                key={s}
+                href={`#${s}`}
+                onClick={() => setMobileOpen(false)}
+                className="font-slogan capitalize text-lg border-b border-white/10 pb-4 hover:text-agro-green transition-colors"
+              >
+                {s}
+              </a>
+            ))}
+          </div>
+        )}
       </nav>
 
-      {/* Hero Section */}
-      <section id="inicio" className="relative h-screen flex items-center justify-center pt-20">
-        <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1592394533824-9440e5d68530?q=80&w=2000" alt="Campos agrícolas" className="w-full h-full object-cover filter brightness-[0.45]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+      {/* ── HERO ────────────────────────────────────────────────────── */}
+      <section
+        id="inicio"
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0d2b5e 0%, #1b4999 50%, #112f66 100%)' }}
+      >
+        <FloatingParticles />
+
+        {/* Huge watermark globe */}
+        <div
+          className="absolute -right-40 -top-40 opacity-[0.06] pointer-events-none select-none"
+          style={{ animation: 'spin 40s linear infinite' }}
+        >
+          <img src="/logos/logo-9.png" alt="" className="w-[700px] h-[700px] object-contain"
+            onError={(e) => { e.target.src = '/logos/logo-1.png'; }} />
         </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center mt-16 animate-fade-in-up">
-          <div className="inline-block mb-4 px-4 py-1.5 rounded-full border border-nature-400/40 bg-nature-500/10 backdrop-blur-sm">
-            <span className="text-nature-300 text-xs font-semibold tracking-wider uppercase">El futuro del agro</span>
+        <div
+          className="absolute -left-32 -bottom-32 opacity-[0.05] pointer-events-none select-none"
+          style={{ animation: 'spin 60s linear infinite reverse' }}
+        >
+          <img src="/logos/logo-9.png" alt="" className="w-[500px] h-[500px] object-contain"
+            onError={(e) => { e.target.src = '/logos/logo-1.png'; }} />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 text-center">
+          {/* Main Logo */}
+          <div className="flex justify-center mb-10" style={{ animation: 'slideUp 0.8s ease-out forwards' }}>
+            <img
+              src="/logos/mesa-de-trabajo-3.png"
+              alt="Universal Agro"
+              className="h-32 md:h-44 w-auto"
+            />
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6">
-            Innovación y bienestar para el <span className="text-transparent bg-clip-text bg-gradient-to-r from-nature-400 to-emerald-200">sector agropecuario</span>
-          </h1>
-          <p className="mt-4 text-xl text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            Soluciones integrales, tecnología avanzada y productos de primera calidad para potenciar la productividad de sus tierras.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="#productos" className="px-8 py-4 rounded-full bg-nature-600 text-white font-semibold text-lg hover:bg-nature-500 transition-all shadow-[0_0_20px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2">
-              Ver Catálogo
-              <ArrowRight className="w-5 h-5" />
+
+          {/* Headline */}
+          <div style={{ animation: 'slideUp 0.8s 0.2s ease-out both' }}>
+            <h1 className="font-brand text-6xl md:text-8xl lg:text-9xl text-white leading-[0.9] mb-4 tracking-tight">
+              Universally<br />
+              <span className="text-agro-green" style={{ WebkitTextStroke: '0px' }}>
+                different.
+              </span>
+            </h1>
+          </div>
+
+          {/* Subtitle */}
+          <div style={{ animation: 'slideUp 0.8s 0.4s ease-out both' }}>
+            <p className="font-slogan text-white/70 text-lg md:text-xl max-w-2xl mx-auto mt-6 mb-10 leading-relaxed">
+              Soluciones integrales, innovación y compromiso real para el campo colombiano.
+            </p>
+          </div>
+
+          {/* CTAs */}
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            style={{ animation: 'slideUp 0.8s 0.6s ease-out both' }}
+          >
+            <a
+              href="#productos"
+              className="px-8 py-4 rounded-full bg-agro-green text-agro-blue font-brand text-base tracking-wider hover:bg-agro-green-light transition-all glow-green hover:-translate-y-1 flex items-center gap-2"
+            >
+              Ver Catálogo <ArrowRight size={18} />
             </a>
-            <a href="#nosotros" className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-lg hover:bg-white/20 transition-all flex items-center justify-center">
+            <a
+              href="#nosotros"
+              className="px-8 py-4 rounded-full border-2 border-white/30 text-white font-slogan text-base hover:border-agro-green hover:text-agro-green transition-all"
+            >
               Conoce Más
             </a>
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40"
+             style={{ animation: 'float 3s ease-in-out infinite' }}>
+          <span className="font-slogan text-xs tracking-widest uppercase">Scroll</span>
+          <ChevronDown size={20} />
+        </div>
       </section>
 
-      {/* Features/Stats Section */}
-      <section className="relative -mt-20 z-20 max-w-7xl mx-auto px-6 lg:px-8 mb-24">
-        <div className="glass-effect rounded-3xl p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
-          <div className="flex flex-col items-center pt-4 md:pt-0">
-            <div className="w-16 h-16 rounded-2xl bg-earth-100 flex items-center justify-center mb-6 text-earth-600">
-              <ShieldCheck className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Calidad Garantizada</h3>
-            <p className="text-gray-500">Estándares internacionales para el máximo rendimiento.</p>
-          </div>
-          <div className="flex flex-col items-center pt-8 md:pt-0">
-            <div className="w-16 h-16 rounded-2xl bg-nature-100 flex items-center justify-center mb-6 text-nature-600">
-              <Sprout className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Compromiso Sustentable</h3>
-            <p className="text-gray-500">Prácticas agrícolas amigables con el medio ambiente.</p>
-          </div>
-          <div className="flex flex-col items-center pt-8 md:pt-0">
-            <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 text-blue-600">
-              <TrendingUp className="w-8 h-8" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Mayor Productividad</h3>
-            <p className="text-gray-500">Incrementa tus resultados con tecnología de vanguardia.</p>
+      {/* ── MARQUEE ─────────────────────────────────────────────────── */}
+      <div className="bg-agro-green overflow-hidden py-4 relative">
+        <div className="marquee-track">
+          {[...Array(8)].map((_, i) => (
+            <span key={i} className="font-brand text-agro-blue text-2xl tracking-widest uppercase mx-8 whitespace-nowrap">
+              Universally Different &nbsp;•&nbsp; Universal Agro &nbsp;•&nbsp; Innovación Agrícola &nbsp;•&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── STATS ───────────────────────────────────────────────────── */}
+      <section className="bg-agro-blue py-24 relative overflow-hidden noise-overlay">
+        <div className="absolute inset-0 opacity-5">
+          <img src="/logos/logo-9.png" alt="" className="w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = 'none'; }} />
+        </div>
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
+            {stats.map((s, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <Counter value={s.value} suffix={s.suffix} label={s.label} />
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="nosotros" className="py-20 bg-earth-50">
+      {/* ── ABOUT ───────────────────────────────────────────────────── */}
+      <section id="nosotros" className="py-32 bg-white relative overflow-hidden">
+        {/* Decorative blob */}
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-agro-green-pale rounded-full blur-3xl opacity-60 pointer-events-none" />
+
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative">
-                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1000" alt="Agricultura moderna" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+
+            {/* Left: Visual */}
+            <Reveal>
+              <div className="relative">
+                {/* Big background number */}
+                <div
+                  className="absolute -top-6 -left-6 font-brand text-[200px] leading-none text-agro-blue opacity-[0.04] pointer-events-none select-none"
+                >
+                  UA
+                </div>
+
+                {/* Logo showcase card */}
+                <div className="relative bg-agro-blue rounded-[2.5rem] p-12 shadow-2xl glow-blue overflow-hidden">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute -bottom-10 -right-10 w-72 h-72 bg-agro-green rounded-full blur-2xl" />
+                  </div>
+                  <img
+                    src="/logos/mesa-de-trabajo-3.png"
+                    alt="Universal Agro"
+                    className="w-full max-w-md mx-auto relative z-10"
+                  />
+                  <div className="mt-8 text-center relative z-10">
+                    <p className="font-slogan text-white/60 text-sm tracking-widest uppercase">Est. Colombia</p>
+                    <p className="font-brand text-agro-green text-3xl mt-1">2026</p>
+                  </div>
+                </div>
+
+                {/* Floating badge */}
+                <div className="absolute -bottom-6 -right-6 bg-agro-green rounded-2xl p-6 shadow-2xl">
+                  <div className="font-brand text-agro-blue text-5xl leading-none">15+</div>
+                  <div className="font-slogan text-agro-blue text-xs uppercase tracking-wide mt-1">Años en el campo</div>
+                </div>
               </div>
-              <div className="absolute -bottom-10 -right-10 bg-white p-8 rounded-3xl shadow-2xl max-w-xs hidden md:block">
-                <div className="text-nature-600 font-extrabold text-5xl mb-2">15+</div>
-                <div className="text-gray-800 font-bold text-lg leading-tight">Años liderando el desarrollo agropecuario</div>
+            </Reveal>
+
+            {/* Right: Text */}
+            <div>
+              <Reveal delay={100}>
+                <span className="inline-block px-4 py-1.5 rounded-full bg-agro-blue text-agro-green font-brand text-xs tracking-widest uppercase mb-6">
+                  Quiénes somos
+                </span>
+              </Reveal>
+
+              <Reveal delay={150}>
+                <h2 className="font-brand text-5xl md:text-6xl text-agro-blue leading-tight mb-8">
+                  El aliado del<br />
+                  <span className="text-agro-green">campo colombiano</span>
+                </h2>
+              </Reveal>
+
+              <Reveal delay={200}>
+                <p className="font-slogan text-gray-600 text-lg leading-relaxed mb-8">
+                  <strong className="text-agro-blue font-brand">Universal Agro</strong> es una empresa especializada en
+                  la producción y comercialización de insumos agrícolas y soluciones para la agroindustria,
+                  comprometida con el fortalecimiento del campo colombiano mediante productos de alta calidad,
+                  acompañamiento técnico y un enfoque sostenible.
+                </p>
+              </Reveal>
+
+              <Reveal delay={250}>
+                <div className="bg-agro-blue/5 border-l-4 border-agro-green rounded-r-2xl p-6 mb-8">
+                  <p className="font-slogan text-agro-blue text-base italic leading-relaxed">
+                    "Para el año 2030, ser la compañía referente a nivel nacional en soluciones agrícolas
+                    y agroindustriales."
+                  </p>
+                  <span className="font-brand text-agro-green text-xs tracking-widest uppercase mt-3 block">
+                    — Nuestra Visión 2030
+                  </span>
+                </div>
+              </Reveal>
+
+              <Reveal delay={300}>
+                <a
+                  href="#contacto"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-agro-blue text-white font-brand tracking-wide hover:bg-agro-blue-light transition-all hover:-translate-y-1 shadow-lg shadow-agro-blue/30"
+                >
+                  Habla con un asesor <ArrowRight size={18} />
+                </a>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRODUCTS ────────────────────────────────────────────────── */}
+      <section id="productos" className="py-32 relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #f8fbf0 0%, #eaf4f8 50%, #f0f5ff 100%)' }}>
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-20">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-agro-green text-agro-blue font-brand text-xs tracking-widest uppercase mb-6">
+                Catálogo Estrella
+              </span>
+              <h2 className="font-brand text-5xl md:text-7xl text-agro-blue leading-tight">
+                Fórmulas<br />
+                <span className="text-stroke-blue font-brand">Avanzadas</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((p, i) => (
+              <Reveal key={p.id} delay={i * 80}>
+                <div
+                  className="group relative rounded-3xl overflow-hidden cursor-pointer hover-lift"
+                  style={{ background: p.color }}
+                  onClick={() => setActiveProduct(activeProduct === p.id ? null : p.id)}
+                >
+                  {/* Top area */}
+                  <div className="p-8">
+                    <div
+                      className="inline-block px-3 py-1 rounded-full text-xs font-brand tracking-widest uppercase mb-4"
+                      style={{ background: p.accent, color: p.color === '#97c822' ? '#1b4999' : '#97c822' === p.accent ? '#1b4999' : 'white' }}
+                    >
+                      {p.tag}
+                    </div>
+
+                    {p.img ? (
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden mb-4 shadow-lg transition-transform duration-300 group-hover:scale-105">
+                        <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="text-5xl mb-4 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12">
+                        {p.icon}
+                      </div>
+                    )}
+
+                    <h3 className="font-brand text-3xl text-white leading-tight mb-4">{p.name}</h3>
+
+                    <p className={`font-slogan text-sm leading-relaxed transition-all duration-500 ${
+                      activeProduct === p.id ? 'text-white/90 max-h-40' : 'text-white/60 max-h-0 overflow-hidden md:max-h-40 md:text-white/60'
+                    }`}>
+                      {p.desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom bar */}
+                  <div
+                    className="px-8 py-4 flex items-center justify-between"
+                    style={{ background: 'rgba(0,0,0,0.2)' }}
+                  >
+                    <span className="font-slogan text-white/60 text-xs uppercase tracking-widest">Ver detalles</span>
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:rotate-45"
+                      style={{ background: p.accent }}
+                    >
+                      <ArrowRight size={14} color={p.color} />
+                    </div>
+                  </div>
+
+                  {/* Decorative circle */}
+                  <div
+                    className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-20 transition-all duration-500 group-hover:scale-150 group-hover:opacity-30"
+                    style={{ background: p.accent }}
+                  />
+                </div>
+              </Reveal>
+            ))}
+
+            {/* CTA Card */}
+            <Reveal delay={products.length * 80}>
+              <div className="rounded-3xl border-2 border-dashed border-agro-blue/30 p-8 flex flex-col items-center justify-center text-center hover-lift cursor-pointer group min-h-[200px]"
+                onClick={() => document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' })}>
+                <div className="w-16 h-16 rounded-full bg-agro-green/20 flex items-center justify-center mb-4 group-hover:bg-agro-green transition-colors">
+                  <ArrowRight size={24} className="text-agro-blue" />
+                </div>
+                <h3 className="font-brand text-agro-blue text-xl mb-2">¿Necesitas otro producto?</h3>
+                <p className="font-slogan text-gray-500 text-sm">Nuestros asesores tienen toda la línea disponible.</p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── VALUES ──────────────────────────────────────────────────── */}
+      <section id="valores" className="py-32 bg-agro-blue relative overflow-hidden noise-overlay">
+        {/* Watermark logo */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none">
+          <img src="/logos/logo-9.png" alt="" className="w-[600px] h-[600px] object-contain"
+            onError={(e) => { e.target.style.display = 'none'; }} />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+          <Reveal>
+            <div className="text-center mb-20">
+              <span className="inline-block px-4 py-1.5 rounded-full border border-agro-green/40 text-agro-green font-brand text-xs tracking-widest uppercase mb-6">
+                Identidad de Marca
+              </span>
+              <h2 className="font-brand text-5xl md:text-7xl text-white leading-tight">
+                Nuestros <span className="text-agro-green">Valores</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {values.map((v, i) => (
+              <Reveal key={i} delay={i * 80}>
+                <div className="group text-center">
+                  <div className="w-20 h-20 rounded-full bg-agro-green mx-auto flex items-center justify-center text-3xl mb-5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-agro-green/40">
+                    {v.icon}
+                  </div>
+                  <h3 className="font-brand text-white text-base mb-2 leading-tight">{v.title}</h3>
+                  <p className="font-slogan text-white/50 text-xs leading-relaxed">{v.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Mission / Vision Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-20">
+            <Reveal delay={100}>
+              <div className="rounded-3xl p-8 border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-agro-green rounded-full" />
+                  <h3 className="font-brand text-agro-green text-2xl tracking-wide">Misión</h3>
+                </div>
+                <p className="font-slogan text-white/70 leading-relaxed text-sm">
+                  Contribuir al desarrollo sostenible del agro colombiano ofreciendo soluciones integrales
+                  en insumos agrícolas y productos para la agroindustria, acompañadas de asesoría técnica especializada.
+                  Trabajamos para fortalecer la productividad, rentabilidad y competitividad del productor.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <div className="rounded-3xl p-8 border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-agro-green rounded-full" />
+                  <h3 className="font-brand text-agro-green text-2xl tracking-wide">Visión 2030</h3>
+                </div>
+                <p className="font-slogan text-white/70 leading-relaxed text-sm">
+                  Ser reconocida como la compañía referente a nivel nacional en soluciones agrícolas y agroindustriales,
+                  destacándose por innovación, respaldo técnico y compromiso con la sostenibilidad.
+                  El aliado estratégico del agricultor colombiano.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PHOTO GALLERY ───────────────────────────────────────────── */}
+      <section className="py-24 bg-agro-gray relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-16">
+              <span className="inline-block px-4 py-1 rounded-full bg-agro-green/20 text-agro-green font-semibold text-sm tracking-widest uppercase mb-4">
+                En el campo
+              </span>
+              <h2 className="font-brand text-4xl md:text-5xl text-agro-blue">
+                Así Trabajamos
+              </h2>
+              <p className="mt-4 text-gray-600 max-w-xl mx-auto">
+                Presentes donde más importa — junto al agricultor, en cada cosecha.
+              </p>
+            </div>
+          </Reveal>
+
+          {/* Masonry-style grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {/* Large hero photo */}
+            <Reveal delay={0}>
+              <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '4/3' }}>
+                <img src="/photos/ESR_7845.jpg" alt="Campo Universal Agro" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={60}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/ESR_7849.jpg" alt="Cultivos" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/ESR_7850.jpg" alt="Cosecha" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/ESR_7856.jpg" alt="Campo" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/ESR_7863.jpg" alt="Trabajo en campo" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={140}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/IMG_7150.jpg" alt="Instalaciones" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={160}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/IMG_7151.jpg" alt="Productos" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={180}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/IMG_7152.jpg" alt="Equipo" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <div className="col-span-2 rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '16/7' }}>
+                <img src="/photos/IMG_5755.jpg" alt="Panorámica campo" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={220}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/IMG_7153.jpg" alt="Campo" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+
+            <Reveal delay={240}>
+              <div className="rounded-2xl overflow-hidden hover-lift" style={{ aspectRatio: '1/1' }}>
+                <img src="/photos/IMG_7155.jpg" alt="Agricultura" className="w-full h-full object-cover" />
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA BANNER ──────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden py-32"
+        style={{ background: 'linear-gradient(135deg, #97c822 0%, #6e9318 100%)' }}>
+        <FloatingParticles />
+
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
+          <Reveal>
+            <h2 className="font-brand text-6xl md:text-8xl text-agro-blue leading-tight mb-8">
+              Impulse su<br />campo hoy.
+            </h2>
+          </Reveal>
+          <Reveal delay={150}>
+            <p className="font-slogan text-agro-blue/70 text-xl mb-10 leading-relaxed">
+              Contáctenos y descubra cómo nuestros productos transforman la rentabilidad de sus cultivos.
+            </p>
+          </Reveal>
+          <Reveal delay={250}>
+            <a
+              href="#contacto"
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full bg-agro-blue text-white font-brand text-lg tracking-wide hover:bg-agro-blue-dark transition-all hover:-translate-y-1 shadow-2xl shadow-agro-blue/30"
+            >
+              Contactar un Asesor <ArrowRight size={22} />
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── FOOTER / CONTACT ────────────────────────────────────────── */}
+      <footer id="contacto" className="bg-gray-950 text-white pt-24 pb-10 relative overflow-hidden">
+        {/* Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-agro-blue/20 blur-3xl rounded-full pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
+
+            {/* Brand column */}
+            <div>
+              <img src="/logos/mesa-de-trabajo-2.png" alt="Universal Agro" className="h-40 w-auto mb-6"
+                onError={(e) => { e.target.src = '/logos/mesa-de-trabajo-3.png'; }} />
+              <p className="font-slogan text-gray-400 text-sm leading-relaxed mb-6">
+                Especialistas en insumos agrícolas y soluciones para la agroindustria colombiana.
+              </p>
+              <p className="font-brand text-agro-green text-lg tracking-wide">Universally different.</p>
+
+              {/* Socials */}
+              <div className="flex gap-4 mt-6">
+                {[Globe, Share2, Link].map((Icon, i) => (
+                  <a key={i} href="#" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:border-agro-green hover:text-agro-green transition-colors">
+                    <Icon size={16} />
+                  </a>
+                ))}
               </div>
             </div>
+
+            {/* Quick links */}
             <div>
-              <h2 className="text-nature-600 font-bold tracking-wide uppercase text-sm mb-3">Sobre Nosotros</h2>
-              <h3 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">Potenciando el corazón de la tierra</h3>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                En <span className="font-semibold text-nature-700">Universal Agro S.A.S</span>, no solo comercializamos productos; brindamos soluciones transformadoras. Nuestro compromiso es evolucionar las prácticas agrícolas mediante innovación y excelencia, garantizando la prosperidad del campo y de quienes lo trabajan.
-              </p>
-              <ul className="space-y-4 mb-10">
-                {[
-                  'Asesoría técnica especializada.',
-                  'Insumos agrícolas de marcas líderes mundiales.',
-                  'Compromiso inquebrantable con la rentabilidad de su cultivo.'
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center text-gray-700 font-medium">
-                    <div className="mr-4 p-1 rounded-full bg-nature-100 text-nature-600">
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                    {item}
+              <h4 className="font-brand text-white text-lg tracking-wide mb-6">Navegación</h4>
+              <ul className="space-y-3">
+                {['Inicio','Nosotros','Productos','Valores','Contacto'].map((l) => (
+                  <li key={l}>
+                    <a href={`#${l.toLowerCase()}`}
+                      className="font-slogan text-gray-400 text-sm hover:text-agro-green transition-colors flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-agro-green/40 inline-block" />
+                      {l}
+                    </a>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Premium Products Showcase */}
-      <section id="productos" className="py-32 bg-white relative overflow-hidden">
-        {/* Background Decorative Elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-b from-nature-50 to-transparent rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-t from-earth-50 to-transparent rounded-full blur-3xl opacity-50 translate-y-1/3 -translate-x-1/4"></div>
-
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-20">
-            <span className="px-4 py-1.5 rounded-full bg-nature-100 text-nature-700 text-sm font-bold tracking-wider uppercase inline-block mb-4">Catálogo Estrella</span>
-            <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6">Fórmulas Avanzadas</h2>
-            <p className="text-xl text-gray-500 max-w-2xl mx-auto">Soluciones hiper-optimizadas para el campo moderno. Diseñadas para corregir, prevenir y potenciar.</p>
-          </div>
-
-          <div className="space-y-32">
-            {realProducts.map((p, index) => {
-              const isEven = index % 2 === 0;
-              return (
-                <div key={p.id} className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-16 group`}>
-                  {/* Image Presentation */}
-                  <div className="w-full lg:w-1/2 relative">
-                    <div className="aspect-square max-w-md mx-auto relative rounded-[2.5rem] bg-gray-50 p-10 flex items-center justify-center transition-all duration-500 group-hover:shadow-2xl">
-                      {/* Subdued shadow logic for image */}
-                      <div className={`absolute inset-0 rounded-[2.5rem] opacity-20 bg-gradient-to-tr ${p.color} blur-2xl transition-all duration-500 group-hover:scale-110 group-hover:opacity-40`}></div>
-                      
-                      {/* Product Image placeholder logic */}
-                      <div className="relative w-full h-full glass-effect rounded-2xl flex items-center justify-center overflow-hidden border border-white/40 shadow-xl z-10 p-6 bg-white shrink-0">
-                          {/* NOTE: You will replace this IMG with your bottle images */}
-                          <img src={p.imgPlaceholder} alt={p.name} className="w-full h-full object-cover rounded-xl opacity-90 group-hover:scale-105 transition-transform duration-700" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Text Content */}
-                  <div className="w-full lg:w-1/2">
-                    <div className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-6 bg-gradient-to-r ${p.color} text-white shadow-lg`}>
-                      {p.tag}
-                    </div>
-                    <h3 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 font-serif tracking-tight">{p.name}</h3>
-                    <div className="w-20 h-1.5 bg-nature-500 mb-8 rounded-full"></div>
-                    
-                    <p className="text-xl text-gray-600 leading-relaxed mb-6 font-light">
-                      {p.desc}
-                    </p>
-                    <div className="bg-earth-50 rounded-2xl p-6 border-l-4 border-nature-500 mb-8 shadow-sm">
-                      <p className="text-gray-700 font-medium">
-                        {p.details}
-                      </p>
-                    </div>
-
-                    <ul className="space-y-3 mb-10">
-                      <li className="flex items-center text-gray-600">
-                        <CheckCircle2 className="w-5 h-5 text-nature-500 mr-3" /> Alta Estabilidad & Eficiencia
-                      </li>
-                      <li className="flex items-center text-gray-600">
-                        <CheckCircle2 className="w-5 h-5 text-nature-500 mr-3" /> Resultados Notables en Campo
-                      </li>
-                    </ul>
-
-                    <button className="px-8 py-4 rounded-full border-2 border-gray-900 text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all flex items-center gap-2">
-                       Consultar Disponibilidad <ArrowRight className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA / Footer */}
-      <footer id="contacto" className="bg-gray-900 text-white pt-20 pb-10 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -ml-[40rem] w-[80rem] h-[40rem] -translate-y-1/2 opacity-20 pointer-events-none">
-          <div className="mx-auto w-full h-full bg-gradient-to-b from-nature-500 to-transparent rounded-full blur-3xl"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+            {/* Contact */}
             <div>
-              <h3 className="text-3xl font-bold mb-6">Impulse su rendimiento productivo hoy.</h3>
-              <p className="text-gray-400 mb-8 max-w-md line-clamp-3">
-                Contáctenos para descubrir cómo nuestros productos y asesoría técnica especializada pueden transformar la rentabilidad de sus cultivos.
-              </p>
-              <a href="mailto:contacto@universalagrosas.com" className="inline-block px-8 py-4 rounded-full bg-nature-500 text-gray-900 font-bold hover:bg-nature-400 transition-colors shadow-lg shadow-nature-500/20">
-                Contactar a un Asesor
+              <h4 className="font-brand text-white text-lg tracking-wide mb-6">Contacto</h4>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-gray-400 text-sm font-slogan">
+                  <MapPin size={16} className="text-agro-green mt-0.5 flex-shrink-0" />
+                  Calle 51 No.26-10 Odeñas, Bogotá D.C., Colombia
+                </li>
+                <li className="flex items-center gap-3 text-gray-400 text-sm font-slogan">
+                  <Phone size={16} className="text-agro-green flex-shrink-0" />
+                  31 372185
+                </li>
+                <li className="flex items-center gap-3 text-gray-400 text-sm font-slogan">
+                  <Mail size={16} className="text-agro-green flex-shrink-0" />
+                  universal.agrosas@gmail.com
+                </li>
+              </ul>
+
+              <a
+                href="mailto:universal.agrosas@gmail.com"
+                className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full border border-agro-green text-agro-green font-brand text-sm tracking-wide hover:bg-agro-green hover:text-agro-blue transition-all"
+              >
+                Enviar mensaje <ArrowRight size={16} />
               </a>
             </div>
-            <div className="grid grid-cols-2 gap-8 text-sm text-gray-400">
-              <div>
-                <h4 className="text-white font-semibold mb-4 text-base">Navegación</h4>
-                <ul className="space-y-3">
-                  <li><a href="#inicio" className="hover:text-nature-400 transition-colors">Inicio</a></li>
-                  <li><a href="#nosotros" className="hover:text-nature-400 transition-colors">Acerca de Nosotros</a></li>
-                  <li><a href="#productos" className="hover:text-nature-400 transition-colors">Productos</a></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-white font-semibold mb-4 text-base">Legal</h4>
-                <ul className="space-y-3">
-                  <li><a href="#" className="hover:text-nature-400 transition-colors">Política de Privacidad</a></li>
-                  <li><a href="#" className="hover:text-nature-400 transition-colors">Términos de Servicio</a></li>
-                </ul>
-              </div>
-            </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-            <p>&copy; 2026 Universal Agro S.A.S. Todos los derechos reservados.</p>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <Globe className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
+
+          {/* Bottom bar */}
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="font-slogan text-gray-600 text-xs">
+              © 2026 Universal Agro S.A.S. Todos los derechos reservados.
+            </p>
+            <div className="flex gap-6">
+              <a href="#" className="font-slogan text-gray-600 text-xs hover:text-agro-green transition-colors">Política de Privacidad</a>
+              <a href="#" className="font-slogan text-gray-600 text-xs hover:text-agro-green transition-colors">Términos de Servicio</a>
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Global keyframe styles */}
+      <style>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(50px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50%       { transform: translateY(-18px) rotate(4deg); }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
