@@ -504,16 +504,12 @@ export default function App() {
               {/* Green border accent */}
               <div className="absolute inset-0 rounded-3xl pointer-events-none z-10"
                 style={{ border: '2px solid rgba(151,200,34,0.4)' }} />
-              <video
-                className="w-full aspect-video object-cover"
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-              >
-                <source src="/video%20pagina.mp4" type="video/mp4" />
-              </video>
+              <iframe
+                className="w-full aspect-video"
+                src="https://drive.google.com/file/d/12hedPXS627SzkCEES11XIQ9yBVR6zft6/preview"
+                allow="autoplay"
+                allowFullScreen
+              />
             </div>
           </Reveal>
         </div>
