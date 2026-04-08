@@ -11,7 +11,7 @@ const products = [
     color: '#1b4999',
     accent: '#97c822',
     icon: '🌿',
-    img: '/photos/pequeños.jpg',
+    img: '/photos/universal-cabzn.png',
     ficha: '/fichas-tecnicas/FT-UNIVERSAL-CaBZn-2026.pdf',
   },
   {
@@ -88,7 +88,7 @@ const products = [
     color: '#97c822',
     accent: '#1b4999',
     icon: '🍅',
-    img: '/photos/mantenimiento-solanaceas.jpg',
+    img: '/photos/mantenimiento.png',
     ficha: '/fichas-tecnicas/FT-MANTENIMIENTO-SOLANACEAS-2026.pdf',
   },
   {
@@ -99,7 +99,7 @@ const products = [
     color: '#1b4999',
     accent: '#97c822',
     icon: '🫑',
-    img: '/photos/llenado-solanaceas.jpg',
+    img: '/photos/llenado-solanaceas.png',
     ficha: '/fichas-tecnicas/FT-LLENADO-SOLANACEAS-2026.pdf',
   },
   {
@@ -110,7 +110,7 @@ const products = [
     color: '#97c822',
     accent: '#1b4999',
     icon: '🌿',
-    img: '/photos/solanaceas-10-30-10.jpg',
+    img: '/photos/solacenaes.png',
     ficha: '/fichas-tecnicas/FT-SOLANACEAS-10-30-10-2026.pdf',
   },
 ];
