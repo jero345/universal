@@ -265,7 +265,7 @@ function PhotoCarousel() {
         {visible.map((photo, i) => (
           <div
             key={`${current}-${i}`}
-            className={`rounded-2xl overflow-hidden transition-all duration-400 ${i === 1 ? 'md:scale-105 shadow-2xl' : 'opacity-90'}`}
+            className={`rounded-2xl overflow-hidden transition-all duration-400 ${i !== 0 ? 'hidden md:block' : ''} ${i === 1 ? 'md:scale-105 shadow-2xl' : 'opacity-90'}`}
             style={{ aspectRatio: '4/3', transition: 'opacity 0.4s ease, transform 0.4s ease' }}
           >
             <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" />
