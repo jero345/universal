@@ -28,7 +28,7 @@ const products = [
   {
     id: 3,
     name: 'NEW GREEN',
-    tag: 'Mejora de Cultivos',
+    tag: 'bioestimulante',
     desc: 'Mejora calidad y llenado de cultivos de exportación. Enriquecido con citoquininas 600 ppm. Activa el metabolismo celular.',
     color: '#1b4999',
     accent: '#97c822',
@@ -39,7 +39,7 @@ const products = [
   {
     id: 4,
     name: 'PERFEKTO',
-    tag: 'Bioestimulante Foliar',
+    tag: 'fertilizante foliar',
     desc: 'Aporta potasio y fósforo ligados a moléculas orgánicas. Con gluconato de potasio, ácidos carboxílicos y hormonas que maximizan el rendimiento.',
     color: '#97c822',
     accent: '#1b4999',
@@ -83,7 +83,7 @@ const products = [
   {
     id: 8,
     name: 'MANTENIMIENTO SOLANACEAS',
-    tag: 'Fórmula Especial',
+    tag: 'fertilizante soluble',
     desc: 'Fórmula especial diseñada para el mantenimiento de cultivos de solanáceas. Equilibra la nutrición para un desarrollo óptimo y sostenido.',
     color: '#97c822',
     accent: '#1b4999',
@@ -94,7 +94,7 @@ const products = [
   {
     id: 9,
     name: 'LLENADO SOLANACEAS',
-    tag: 'Fórmula Especial',
+    tag: 'fertilizante soluble',
     desc: 'Fórmula especial para la etapa de llenado en cultivos de solanáceas. Maximiza el tamaño y calidad del fruto en el momento clave del ciclo.',
     color: '#1b4999',
     accent: '#97c822',
@@ -112,6 +112,39 @@ const products = [
     icon: '🌿',
     img: '/photos/solacenaes.png',
     ficha: '/fichas-tecnicas/FT-SOLANACEAS-10-30-10-2026.pdf',
+  },
+  {
+    id: 11,
+    name: 'YESO-AGRO',
+    tag: 'Enmienda Agrícola',
+    desc: 'Enmienda agrícola a base de yeso. Mejora las condiciones físicas y químicas del suelo, aporta calcio y azufre disponibles para el cultivo.',
+    color: '#1b4999',
+    accent: '#97c822',
+    icon: '🪨',
+    img: '',
+    ficha: '/fichas-tecnicas/FT  YESO-AGRO 2026.pdf',
+  },
+  {
+    id: 12,
+    name: 'AGRO-SILICATO',
+    tag: 'Enmienda Agrícola',
+    desc: 'Enmienda agrícola a base de silicato. Fortalece las paredes celulares, mejora la tolerancia al estrés y potencia la resistencia del cultivo.',
+    color: '#97c822',
+    accent: '#1b4999',
+    icon: '💎',
+    img: '',
+    ficha: '/fichas-tecnicas/FT AGRO-SILICATO 2026.pdf',
+  },
+  {
+    id: 13,
+    name: 'AGRO YESO MAG',
+    tag: 'Enmienda Agrícola',
+    desc: 'Enmienda agrícola con yeso y magnesio. Combina los beneficios del azufre, calcio y magnesio para una nutrición integral del suelo.',
+    color: '#1b4999',
+    accent: '#97c822',
+    icon: '🔬',
+    img: '',
+    ficha: '/fichas-tecnicas/FT  AGRO YESO MAG  2026.pdf',
   },
 ];
 
@@ -985,7 +1018,7 @@ export default function App() {
 
       {/* ── WhatsApp Floating Button ────────────────────────────────── */}
       <a
-        href="https://wa.me/573144591627"
+        href="https://wa.me/573144591627?text=Quiero%20m%C3%A1s%20informaci%C3%B3n"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-green-500/40"
